@@ -1,4 +1,3 @@
-import { Client } from "postgress";
 import "dotenv/load.ts";
 import { createClient } from "supabase";
 

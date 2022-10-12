@@ -9,9 +9,7 @@
     "twind": "https://esm.sh/twind@0.16.17",
     "twind/": "https://esm.sh/twind@0.16.17/",
     "dayjs/": "https://esm.sh/dayjs@1.11.3/",
-    "basicAuth/": "https://deno.land/x/basic_auth@v1.1.1/",
     "@db": "./util/db.ts",
-    "postgress": "https://deno.land/x/postgres@v0.16.1/mod.ts",
     "dotenv/": "https://deno.land/x/dotenv@v3.2.0/",
     "supabase": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
   }
