@@ -18,6 +18,10 @@ export interface Post {
   created_at: string;
 }
 
+/**
+ * 送信データの型
+ */
+
 export interface Data {
   error: {
     work_id: string;
@@ -40,11 +44,11 @@ const createFantasticData = (rawData): Post[] =>
   rawData.map((x) => ({
     ...x,
     ...{
-      work: x.work.work_number,
-      student: x.student.name,
-      student_number: x.student.student_number,
-      class: x.student.class.class_name,
-      rank: x.rank?.rank,
+      work: x.works.work_number,
+      student: x.students.name,
+      student_number: x.students.student_number,
+      class: x.students.classes.class_name,
+      rank: x.ranks?.rank,
     },
   }));
 
@@ -55,17 +59,16 @@ export const findAllPosts = async (): Promise<Post[] | []> => {
   try {
     const { data, error } = await supabase
       .from("posts")
-      .select(`
-        id,
-        work:work_id ( work_number ),
-        student:student_id ( name, student_number, class:class_id ( class_name ) ),
-        rank:rank_id ( rank ),
-        work_url,
-        work_time,
-        comment,
-        created_at
-      `);
-    console.log(createFantasticData(data));
+      .select("*,works(*),students(*,classes(*))")
+      .order("class_name", {
+        foreignTable: "students.classes",
+        ascending: false,
+      })
+      .order("work_id", { ascending: false })
+      .order("student_number", {
+        foreignTable: "students",
+        ascending: true,
+      });
     return createFantasticData(data);
   } catch (e) {
     console.error(e);
@@ -91,7 +94,6 @@ export const findPostById = async (id: string): Promise<Post | null> => {
         created_at
       `)
       .eq("id", [id]);
-    console.log(createFantasticData(data));
     return createFantasticData(data)[0];
   } catch (e) {
     console.error(e);
@@ -99,22 +101,20 @@ export const findPostById = async (id: string): Promise<Post | null> => {
   }
 };
 
+// 既存データ有無のチェック
+// 課題上書きの処理
+// 課題評価の処理
+
 /**
  * 記事を新規作成する
  */
 export const createPost = async (
   post: Pick<Data, "work_id" | "student_id" | "work_url" | "work_time">,
-) => {
+): Promise<Post[] | null> => {
   try {
-    console.log(post);
     const { data, error } = await supabase
       .from("posts")
       .insert(post);
-    // const result = await client.queryObject<Post>(
-    //   "INSERT INTO posts (title, content) VALUES ($1, $2) RETURNING *",
-    //   [post.title, post.content],
-    // );
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
