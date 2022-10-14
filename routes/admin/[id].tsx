@@ -10,7 +10,7 @@ interface Hoge {
 }
 
 export const handler: Handlers<Hoge | Update | null> = {
-  async GET(req, ctx) {
+  async GET(_, ctx) {
 
     const { id } = ctx.params;
 

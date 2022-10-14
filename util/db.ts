@@ -189,8 +189,6 @@ const isExistsSameWork = async (
   }
 };
 
-// 課題上書きの処理
-
 /**
  * 記事を新規作成する
  */
