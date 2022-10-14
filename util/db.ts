@@ -72,7 +72,15 @@ const createFantasticData = (rawData): Post[] =>
       rank: x.ranks?.rank,
       rank_id: x.ranks?.id,
     },
-  }));
+  })).sort((a, b) => {
+    if (a.class > b.class) return -1;
+    if (a.class < b.class) return 1;
+    if (a.work > b.work) return -1;
+    if (a.work < b.work) return 1;
+    if (a.student_number > b.student_number) return 1;
+    if (a.student_number < b.student_number) return -1;
+    return 0;
+  });
 
 /**
  * すべての記事を取得する
@@ -81,16 +89,16 @@ export const findAllPosts = async (): Promise<Post[] | []> => {
   try {
     const { data, error } = await supabase
       .from("posts")
-      .select("*,works(*),ranks(*),students(*,classes(*))")
-      .order("class_name", {
-        foreignTable: "students.classes",
-        ascending: false,
-      })
-      .order("work_id", { ascending: false })
-      .order("student_number", {
-        foreignTable: "students",
-        ascending: true,
-      });
+      .select("*, works(*), ranks(*), students(*, classes(*))");
+    // .order("class_name", {
+    //   foreignTable: "students.classes",
+    //   ascending: false,
+    // })
+    // .order("work_id", { ascending: false })
+    // .order("name", {
+    //   foreignTable: "students",
+    //   ascending: true,
+    // });
     return createFantasticData(data);
   } catch (e) {
     console.error(e);
