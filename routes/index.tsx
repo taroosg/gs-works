@@ -17,7 +17,7 @@ export const handler: Handlers<Post[]> = {
 
 export default function Home({ data }: PageProps<Post[]>) { // ③
   return (
-    <div class="h-screen bg-gray-50 dark:bg-gray-800">
+    <div class="h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
         <title>G's Work Posts</title>
       </Head>
@@ -28,9 +28,10 @@ export default function Home({ data }: PageProps<Post[]>) { // ③
             <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">Posts</h2>
             <a
               href="/posts/create"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md dark:text-gray-400"
             >
-              Create Post
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                Create Post
+              </button>
             </a>
           </div>
           <div class="overflow-x-auto relative shadow-md">
@@ -82,7 +83,13 @@ export default function Home({ data }: PageProps<Post[]>) { // ③
                       {post.rank}
                     </td>
                     <td class="py-4 px-6">
-                      <a href={post.work_url} target="_blank">link</a>
+                      <a
+                        href={post.work_url}
+                        target="_blank"
+                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      >
+                        Link
+                      </a>
                     </td>
                     <td class="py-4 px-6">
                       {post.work_time}
