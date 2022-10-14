@@ -1,6 +1,5 @@
 import "dotenv/load.ts";
 import { createClient } from "supabase";
-// import { createClient } from "https://deno.land/x/supabase/mod.ts";
 
 /**
  * posts テーブルの型
@@ -59,13 +58,7 @@ export interface Update {
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL"),
   Deno.env.get("SUPABASE_ANON"),
-  {
-    detectSessionInUrl: false,
-    // autoRefreshToken: true,
-    // persistSession: true
-    // url: string,
-    // headers?: { [key: string]: string },
-  },
+  {},
 );
 
 const createFantasticData = (rawData): Post[] =>
