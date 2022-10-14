@@ -90,10 +90,22 @@ export default function PostPage({ data }: PageProps<Hoge | null>) {
                 <div class="flex items-center space-x-4">
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                      クラス名
+                      課題番号
                     </p>
                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                      email@windster.com
+                      {data.post.work_description}
+                    </p>
+                  </div>
+                  <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                    {data.post.work}
+                  </div>
+                </div>
+              </li>
+              <li class="py-3 sm:py-4">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                      クラス名
                     </p>
                   </div>
                   <div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
