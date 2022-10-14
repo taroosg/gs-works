@@ -11,23 +11,21 @@ interface Hoge {
 
 export const handler: Handlers<Hoge | Update | null> = {
   async GET(req, ctx) {
-    // パスパラメータを取得
+
     const { id } = ctx.params;
-    // パスパラメータの ID を引数に記事を取得
+
     const post = await findPostById(id);
     const ranks = await getRanks();
 
-    // 記事が取得できなかった場合は null を渡す
     if (!post || !ranks) {
       return ctx.render(null);
     }
 
-    // 記事が取得できた場合は取得した記事を渡す
     return ctx.render({ post, ranks });
   },
   async POST(req, ctx) {
     const { id } = ctx.params;
-    // フォームデータの入力値を取得
+
     const formData = await req.formData();
     const rank_id = formData.get("rank")?.toString();
     const comment = formData.get("comment")?.toString();
@@ -66,7 +64,7 @@ export const handler: Handlers<Hoge | Update | null> = {
 
 
 export default function PostPage({ data }: PageProps<Hoge | null>) {
-  // Props.data に null が渡された時には `Not Found` を表示する
+
   if (!data) {
     return <div>Not Found</div>;
   }
@@ -117,12 +115,6 @@ export default function PostPage({ data }: PageProps<Hoge | null>) {
               {data?.error?.rank_id && (
                 <p class="text-red-500 text-sm">{data.error.rank_id}</p>
               )}
-              {/* <input
-                id="rank"
-                class="w-full p-2 border border-gray-300 rounded-md"
-                type="text"
-                name="rank"
-              /> */}
             </div>
             <div>
               <label class="text-gray-500 text-sm" htmlFor="content">

@@ -114,9 +114,6 @@ export const findPostById = async (id: string): Promise<Post | null> => {
   }
 };
 
-// 既存データ有無のチェック
-// 課題上書きの処理
-
 /**
  * クラス一覧を取得する
  */
@@ -142,7 +139,6 @@ export const getStudents = async () => {
       .from("students")
       .select("id, classes(*), student_number, name")
       .order("student_number", { ascending: true });
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
@@ -159,13 +155,32 @@ export const getWorks = async () => {
       .from("works")
       .select("id, work_number, description")
       .order("work_number", { ascending: true });
-    console.log(data);
     return data;
   } catch (e) {
     console.error(e);
     return null;
   }
 };
+
+// 既存データ有無のチェック
+const isExistsSameWork = async (
+  post: Pick<Data, "work_id" | "student_id" | "work_url" | "work_time">,
+): Promise<boolean | null> => {
+  try {
+    const { work_id, student_id } = post;
+    const { data, error } = await supabase
+      .from("posts")
+      .select()
+      .match({ work_id, student_id });
+    console.log(data);
+    return data.length !== 0;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+// 課題上書きの処理
 
 /**
  * 記事を新規作成する
@@ -174,10 +189,19 @@ export const createPost = async (
   post: Pick<Data, "work_id" | "student_id" | "work_url" | "work_time">,
 ): Promise<Post[] | null> => {
   try {
-    const { data, error } = await supabase
-      .from("posts")
-      .insert(post);
-    return data;
+    const { work_id, student_id, work_url, work_time } = post;
+    if (await isExistsSameWork(post)) {
+      const { data, error } = await supabase
+        .from("posts")
+        .update({ work_url, work_time })
+        .match({ work_id, student_id });
+      return data;
+    } else {
+      const { data, error } = await supabase
+        .from("posts")
+        .insert(post);
+      return data;
+    }
   } catch (e) {
     console.error(e);
     return null;

@@ -63,10 +63,6 @@ export const handler: Handlers<Data | Hoge> = {
   },
 };
 
-// クラス一覧取得
-// 課題一覧取得
-// 名前一覧取得
-
 export default function CreatePostPage({
   data,
 }: PageProps<Data | Hoge | undefined>) {
@@ -100,13 +96,6 @@ export default function CreatePostPage({
                   <option value={x.id}>{x.work_number} {x.description}</option>
                 )}
               </select>
-              {/* <input
-                id="work_id"
-                class="w-full p-2 border border-gray-300 rounded-md"
-                type="text"
-                name="work_id"
-                value={data?.work_id}
-              /> */}
               {data?.error?.work_id && (
                 <p class="text-red-500 text-sm">{data.error.work_id}</p>
               )}
@@ -123,13 +112,6 @@ export default function CreatePostPage({
                   <option value={x.id}>{x.student_number} {x.name}</option>
                 )}
               </select>
-              {/* <input
-                id="student_id"
-                class="w-full p-2 border border-gray-300 rounded-md"
-                type="text"
-                name="student_id"
-                value={data?.student_id}
-              /> */}
               {data?.error?.student_id && (
                 <p class="text-red-500 text-sm">{data.error.student_id}</p>
               )}
@@ -164,17 +146,6 @@ export default function CreatePostPage({
                 <p class="text-red-500 text-sm">{data.error.work_time}</p>
               )}
             </div>
-            {/* <div>
-              <label class="text-gray-500 text-sm" htmlFor="content">
-                Content
-              </label>
-              <textarea
-                id="content"
-                rows={10}
-                class="w-full p-2 border border-gray-300 rounded-md"
-                name="content"
-              />
-            </div> */}
           </div>
           <div class="flex justify-end mt-4">
             <a href="/">
