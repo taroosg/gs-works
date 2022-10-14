@@ -66,6 +66,7 @@ const createFantasticData = (rawData): Post[] =>
     ...x,
     ...{
       work: x.works.work_number,
+      work_description: x.works.description,
       student: x.students.name,
       student_number: x.students.student_number,
       class: x.students.classes.class_name,
