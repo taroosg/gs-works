@@ -1,22 +1,20 @@
 import { PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/src/runtime/head.ts";
 import { Handlers } from "$fresh/server.ts";
-import { Data, createPost } from "@db";
+import { Data, createPost, getStudents, getWorks } from "@db";
 
-// interface Data {
-//   error: {
-//     work_id: string;
-//     student_id: string;
-//     work_url: string;
-//     work_time: string;
-//   };
-//   work_id?: string;
-//   student_id?: string;
-//   work_url?: string;
-//   work_time?: string;
-// }
+interface Hoge {
+  students: unknown;
+  works: unknown;
+}
 
-export const handler: Handlers<Data> = {
+export const handler: Handlers<Data | Hoge> = {
+  async GET(req, ctx) {
+    const students = await getStudents();
+    const works = await getWorks();
+    return ctx.render({ students, works });
+
+  },
   async POST(req, ctx) {
     // フォームデータの入力値を取得
     const formData = await req.formData();
@@ -27,7 +25,11 @@ export const handler: Handlers<Data> = {
 
     // タイトルまたはコンテンツどちらも未入力の場合はバリデーションエラー
     if (!work_id || !student_id || !work_url || !work_time) {
+      const students = await getStudents();
+      const works = await getWorks();
+
       return ctx.render({
+        students, works,
         error: {
           work_id: work_id ? "" : "work_id is required",
           student_id: student_id ? "" : "student_id is required",
@@ -67,7 +69,7 @@ export const handler: Handlers<Data> = {
 
 export default function CreatePostPage({
   data,
-}: PageProps<Data | undefined>) {
+}: PageProps<Data | Hoge | undefined>) {
   return (
     <div class="min-h-screen bg-gray-200">
       <Head>
@@ -90,13 +92,21 @@ export default function CreatePostPage({
               <label class="text-gray-500 text-sm" htmlFor="title">
                 課題番号
               </label>
-              <input
+              <select
+                class="w-full p-2 border border-gray-300 rounded-md"
+                name="work_id" id="work_id"
+              >
+                {data.works.map((x) =>
+                  <option value={x.id}>{x.work_number} {x.description}</option>
+                )}
+              </select>
+              {/* <input
                 id="work_id"
                 class="w-full p-2 border border-gray-300 rounded-md"
                 type="text"
                 name="work_id"
                 value={data?.work_id}
-              />
+              /> */}
               {data?.error?.work_id && (
                 <p class="text-red-500 text-sm">{data.error.work_id}</p>
               )}
@@ -105,13 +115,21 @@ export default function CreatePostPage({
               <label class="text-gray-500 text-sm" htmlFor="title">
                 氏名
               </label>
-              <input
+              <select
+                class="w-full p-2 border border-gray-300 rounded-md"
+                name="student_id" id="student_id"
+              >
+                {data.students.map((x) =>
+                  <option value={x.id}>{x.student_number} {x.name}</option>
+                )}
+              </select>
+              {/* <input
                 id="student_id"
                 class="w-full p-2 border border-gray-300 rounded-md"
                 type="text"
                 name="student_id"
                 value={data?.student_id}
-              />
+              /> */}
               {data?.error?.student_id && (
                 <p class="text-red-500 text-sm">{data.error.student_id}</p>
               )}
@@ -159,6 +177,14 @@ export default function CreatePostPage({
             </div> */}
           </div>
           <div class="flex justify-end mt-4">
+            <a href="/">
+              <button
+                class="bg-white text-blue-500 font-bold py-2 px-4 mx-4 rounded-md border border-blue-500"
+                type="button"
+              >
+                Back
+              </button>
+            </a>
             <button
               class=
               "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"

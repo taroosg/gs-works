@@ -5,13 +5,18 @@ interface State {
   data: string;
 }
 
-const USER = Deno.env.get("AUTH_USER");
-const PASSWORD = Deno.env.get("AUTH_PASSWORD");
+const USER = Deno.env.get("ADMIN_USER");
+const PASSWORD = Deno.env.get("ADMIN_PASSWORD");
+const HOST = Deno.env.get("HOST");
 
 export async function handler(
   req: Request,
   ctx: MiddlewareHandlerContext<State>,
 ) {
+  if (req.headers.get("host") !== HOST) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
   if (
     req.headers.get("Authorization") !== `Basic ${btoa(`${USER}:${PASSWORD}`)}`
   ) {

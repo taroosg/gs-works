@@ -43,6 +43,7 @@ export default function Home({ data }: PageProps<Post[]>) { // ③
                 <th>rank</th>
                 <th>url</th>
                 <th>time</th>
+                <th>action</th>
               </tr>
             </thead>
             <tbody>
@@ -57,6 +58,11 @@ export default function Home({ data }: PageProps<Post[]>) { // ③
                     <a href={post.work_url} target="_blank">link</a>
                   </td>
                   <td>{post.work_time}</td>
+                  <td>
+                    <a href={`admin/${post.id}`}>
+                      admin
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -1,5 +1,4 @@
 import "dotenv/load.ts";
-import { CHAR_RIGHT_ANGLE_BRACKET } from "https://deno.land/std@0.150.0/path/_constants.ts";
 import { createClient } from "supabase";
 
 /**
@@ -14,6 +13,7 @@ export interface Post {
   student_number: string;
   student: string;
   rank: string;
+  rank_id: string;
   class: string;
   created_at: string;
 }
@@ -21,7 +21,6 @@ export interface Post {
 /**
  * 送信データの型
  */
-
 export interface Data {
   error: {
     work_id: string;
@@ -35,9 +34,31 @@ export interface Data {
   work_time?: string;
 }
 
+/**
+ * ランクの型
+ */
+export interface Rank {
+  id: string;
+  rank: string;
+}
+
+/**
+ * 評価データの型
+ */
+export interface Update {
+  error: {
+    id: string;
+    rank_id: string;
+  };
+  id?: string;
+  rank_id?: string;
+  comment?: string;
+}
+
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL"),
   Deno.env.get("SUPABASE_ANON"),
+  {},
 );
 
 const createFantasticData = (rawData): Post[] =>
@@ -49,6 +70,7 @@ const createFantasticData = (rawData): Post[] =>
       student_number: x.students.student_number,
       class: x.students.classes.class_name,
       rank: x.ranks?.rank,
+      rank_id: x.ranks?.id,
     },
   }));
 
@@ -59,7 +81,7 @@ export const findAllPosts = async (): Promise<Post[] | []> => {
   try {
     const { data, error } = await supabase
       .from("posts")
-      .select("*,works(*),students(*,classes(*))")
+      .select("*,works(*),ranks(*),students(*,classes(*))")
       .order("class_name", {
         foreignTable: "students.classes",
         ascending: false,
@@ -83,17 +105,8 @@ export const findPostById = async (id: string): Promise<Post | null> => {
   try {
     const { data, error } = await supabase
       .from("posts")
-      .select(`
-        id,
-        work:work_id ( work_number ),
-        student:student_id ( name, student_number, class:class_id ( class_name ) ),
-        rank:rank_id ( rank ),
-        work_url,
-        work_time,
-        comment,
-        created_at
-      `)
-      .eq("id", [id]);
+      .select("*,works(*),ranks(*),students(*,classes(*))")
+      .match({ id: [id] });
     return createFantasticData(data)[0];
   } catch (e) {
     console.error(e);
@@ -103,7 +116,56 @@ export const findPostById = async (id: string): Promise<Post | null> => {
 
 // 既存データ有無のチェック
 // 課題上書きの処理
-// 課題評価の処理
+
+/**
+ * クラス一覧を取得する
+ */
+export const getClasses = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("classes")
+      .select("id, class_name")
+      .order("started_at", { ascending: false });
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+/**
+ * 受講生一覧を取得する
+ */
+export const getStudents = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("students")
+      .select("id, classes(*), student_number, name")
+      .order("student_number", { ascending: true });
+    console.log(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+/**
+ * 課題一覧を取得する
+ */
+export const getWorks = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("works")
+      .select("id, work_number, description")
+      .order("work_number", { ascending: true });
+    console.log(data);
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
 
 /**
  * 記事を新規作成する
@@ -115,6 +177,43 @@ export const createPost = async (
     const { data, error } = await supabase
       .from("posts")
       .insert(post);
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+/**
+ * ランク一覧を取得する
+ */
+export const getRanks = async (): Promise<Rank[] | null> => {
+  try {
+    const { data, error } = await supabase
+      .from("ranks")
+      .select("id, rank")
+      .order("id", { ascending: true });
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+/**
+ * 課題を評価する
+ */
+export const updatePost = async (
+  update: Pick<Update, "id" | "rank_id" | "comment">,
+): Promise<Post[] | null> => {
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .update({
+        rank_id: update.rank_id === "" ? null : update.rank_id,
+        comment: update.comment === "" ? null : update.comment,
+      })
+      .match({ id: Number(update.id) });
     return data;
   } catch (e) {
     console.error(e);
