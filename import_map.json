@@ -10,6 +10,7 @@
     "twind/": "https://esm.sh/twind@0.16.17/",
     "dayjs/": "https://esm.sh/dayjs@1.11.3/",
     "@db": "./util/db.ts",
+    "@auth": "./util/auth.ts",
     "dotenv/": "https://deno.land/x/dotenv@v3.2.0/",
     "supabase": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
   }
