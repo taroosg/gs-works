@@ -2,6 +2,7 @@ import { PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/src/runtime/head.ts";
 import { Handlers } from "$fresh/server.ts";
 import { Data, createPost, getStudents, getWorks } from "@db";
+import { PostsMenu } from '../../components/PostsMenu.tsx'
 
 interface Hoge {
   students: unknown;
@@ -53,7 +54,7 @@ export const handler: Handlers<Data | Hoge> = {
     return new Response("", {
       status: 303,
       headers: {
-        Location: "/",
+        Location: "/posts",
       },
     });
   },
@@ -74,7 +75,7 @@ export default function CreatePostPage({
         <h1 class="font-extrabold text-5xl text-gray-800 dark:text-gray-400">
           Create Post
         </h1>
-
+        <PostsMenu />
         <form
           class="rounded-xl border dark:border-gray-700 p-5 shadow-md bg-gray-50 dark:bg-gray-800 dark:text-gray-400 mt-8"
           method="POST"
