@@ -171,6 +171,22 @@ export const getWorks = async () => {
   }
 };
 
+/**
+ * すごい課題一覧を取得する
+ */
+export const findFantasticPosts = async (): Promise<Post[] | []> => {
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*, works(*), ranks(*), students(*, classes(*))")
+      .match({ rank_id: 1 });
+    return createFantasticData(data);
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
+
 // 既存データ有無のチェック
 const isExistsSameWork = async (
   post: Pick<Data, "work_id" | "student_id" | "work_url" | "work_time">,

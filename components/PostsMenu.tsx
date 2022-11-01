@@ -8,6 +8,10 @@ export const PostsMenu = () => {
       <a href="/posts" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
         一覧を見る
       </a>
+      <p class="ml-4 mr-4 font-medium text-blue-600 dark:text-blue-500">/</p>
+      <a href="/posts/fantastic" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+        すごい作品
+      </a>
     </section>
   )
 }
