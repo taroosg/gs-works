@@ -16,7 +16,7 @@ export const handler: Handlers<Post[]> = {
   },
 };
 
-export default function Home({ data }: PageProps<Post[]>) {
+export default function PostsPage({ data }: PageProps<Post[]>) {
   return (
     <div class="h-screen bg-gray-200 dark:bg-gray-800">
       <Head>

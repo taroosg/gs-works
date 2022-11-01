@@ -16,7 +16,7 @@ export const handler: Handlers<Post[]> = {
   },
 };
 
-export default function Home({ data }: PageProps<Post[]>) {
+export default function FantasticPage({ data }: PageProps<Post[]>) {
   return (
     <div class="h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
@@ -88,7 +88,7 @@ export default function Home({ data }: PageProps<Post[]>) {
                       {post.work_time}
                     </td>
                     <td class="py-4 px-6 text-right">
-                      <a href={`posts/${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                      <a href={`./${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                         detail
                       </a>
                     </td>
