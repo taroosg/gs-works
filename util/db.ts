@@ -130,7 +130,9 @@ export const getClasses = async () => {
   try {
     const { data, error } = await supabase
       .from("classes")
-      .select("id, class_name")
+      .select("id, class_name, started_at, ended_at")
+      .lte("started_at", new Date().toLocaleDateString())
+      .gte("ended_at", new Date().toLocaleDateString())
       .order("started_at", { ascending: false });
     return data;
   } catch (e) {
@@ -144,9 +146,12 @@ export const getClasses = async () => {
  */
 export const getStudents = async () => {
   try {
+    const classes = await getClasses();
+    const classIds = classes === null ? [] : classes.map((x) => x.id);
     const { data, error } = await supabase
       .from("students")
-      .select("id, classes(*), student_number, name")
+      .select("id, classes(*), class_id, student_number, name")
+      .in("class_id", classIds)
       .order("student_number", { ascending: true });
     return data;
   } catch (e) {
