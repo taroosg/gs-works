@@ -12,12 +12,12 @@ export const handler: Handlers<string> = {
 
 export default function Home({ data }: PageProps<string>) {
   return (
-    <div class="h-screen bg-gray-200 dark:bg-gray-800">
+    <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
         <title>G's Work Posts</title>
       </Head>
       <div class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pt-12 pb-12 flex flex-col">
-        <PageTitle pageTitle="G's Work Posts" />
+        <PageTitle pageTitle="G's Work Posts" link="/" />
         <PostsMenu />
         <section class="mt-8">
           <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">
