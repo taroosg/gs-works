@@ -3,6 +3,7 @@ import { Head } from "$fresh/src/runtime/head.ts";
 import { Handlers } from "$fresh/server.ts";
 import { Post, Update, Rank, findPostById, getRanks, updatePost } from "@db";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
+import { PageTitle } from '../../components/PageTitle.tsx'
 
 interface Hoge {
   post: unknown;
@@ -71,19 +72,20 @@ export default function PostPage({ data }: PageProps<Hoge | null>) {
   return (
     <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
-        <title>{data.post.student}</title>
+        <title>G's Work Admin</title>
       </Head>
       <div
         class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pt-12 pb-20 flex flex-col">
         <header>
-          <h1 class="font-extrabold text-5xl text-gray-800 dark:text-gray-400">
-            Work Detail
-          </h1>
-          <time class="text-gray-500 text-sm" dateTime={data.post.created_at}>
+          <PageTitle pageTitle="G's Work Admin" link="/admin" />
+          {/* <time class="text-gray-500 text-sm" dateTime={data.post.created_at}>
             {dayjs(data.post.created_at).format("YYYY-MM-DD HH:mm:ss")}
-          </time>
+          </time> */}
         </header>
-        <section class="mt-6">
+        <section class="mt-8">
+          <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">
+            Details
+          </h2>
           <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
             <li class="py-3 sm:py-4">
               <div class="flex items-center space-x-4">
