@@ -24,17 +24,19 @@ export const handler: Handlers<Data | Hoge> = {
     const work_url = formData.get("work_url")?.toString();
     const work_time = formData.get("work_time")?.toString();
 
-    if (!work_id || !student_id || !work_url || !work_time) {
+    const isValidWorkUrl = (url: string) => /^https:\/\/github\.com\/.+/.test(url);
+
+    if (!work_id || !student_id || !work_url || !work_time || !isValidWorkUrl(work_url)) {
       const students = await getStudents();
       const works = await getWorks();
 
       return ctx.render({
         students, works,
         error: {
-          work_id: work_id ? "" : "work_id is required",
-          student_id: student_id ? "" : "student_id is required",
-          work_url: work_url ? "" : "work_url is required",
-          work_time: work_time ? "" : "work_time is required",
+          work_id: work_id ? "" : "課題が指定されていません．",
+          student_id: student_id ? "" : "氏名が指定されていません．",
+          work_url: work_url && isValidWorkUrl(work_url) ? "" : "URLが指定されていないもしくは不正です．",
+          work_time: work_time ? "" : "作業時間が入力されていません．",
         },
         work_id,
         student_id,
@@ -150,7 +152,7 @@ export default function CreatePostPage({
                   for="work_time"
                   class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  作業時間
+                  作業時間（h）
                 </label>
                 <input
                   id="work_time"
