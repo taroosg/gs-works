@@ -4,6 +4,7 @@ import dayjs from "https://esm.sh/dayjs@1.11.3";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ja";
 import { Post, findAllPosts } from "@db";
+import { PageTitle } from '../../components/PageTitle.tsx'
 
 dayjs.extend(relativeTime);
 dayjs.locale("ja");
@@ -19,10 +20,10 @@ export default function Home({ data }: PageProps<Post[]>) {
   return (
     <div class="h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
-        <title>G's Work Posts</title>
+        <title>G's Work Admin</title>
       </Head>
       <div class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pt-12 pb-20 flex flex-col">
-        <h1 class="font-extrabold text-5xl text-gray-800 dark:text-gray-400">G's Work Posts</h1>
+        <PageTitle pageTitle="G's Work Admin" link="/admin" />
         <section class="mt-8">
           <div class="flex justify-between items-center">
             <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">Posts</h2>
