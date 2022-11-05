@@ -19,7 +19,7 @@ export const handler: Handlers<Post[]> = {
 
 export default function PostsPage({ data }: PageProps<Post[]>) {
   return (
-    <div class="h-screen bg-gray-200 dark:bg-gray-800">
+    <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
         <title>Posts</title>
       </Head>

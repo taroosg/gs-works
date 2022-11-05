@@ -19,7 +19,7 @@ export const handler: Handlers<Post[]> = {
 
 export default function FantasticPage({ data }: PageProps<Post[]>) {
   return (
-    <div class="h-screen bg-gray-200 dark:bg-gray-800">
+    <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
         <title>Fantastic Posts</title>
       </Head>

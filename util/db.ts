@@ -22,7 +22,9 @@ export interface Post {
  * 送信データの型
  */
 export interface Data {
-  error: {
+  students?: unknown;
+  works?: unknown;
+  error?: {
     work_id: string;
     student_id: string;
     work_url: string;
