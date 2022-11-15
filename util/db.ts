@@ -1,5 +1,5 @@
 import "dotenv/load.ts";
-import { createClient } from "supabase";
+import { createClient, PostgrestResponse } from "supabase";
 
 /**
  * posts テーブルの型
@@ -8,7 +8,7 @@ export interface Post {
   id: string;
   work_url: string;
   work_time: number;
-  comment: string;
+  comment?: string;
   work: string;
   student_number: string;
   student: string;
@@ -16,6 +16,66 @@ export interface Post {
   rank_id: string;
   class: string;
   created_at: string;
+}
+
+/**
+ * workテーブルの型
+ */
+export interface Work {
+  id: string;
+  work_number: string;
+  description: string;
+  created_at: string;
+}
+
+/**
+ * classesテーブルの型
+ */
+export interface Class {
+  id: string;
+  class_name: string;
+  created_at: string;
+  started_at: string;
+  ended_at: string;
+}
+
+/**
+ * studentsテーブルの型
+ */
+export interface Student {
+  id: string;
+  class_id: string;
+  student_number: string;
+  name: string;
+  created_at: string;
+  classes: Class;
+}
+
+/**
+ * ランクの型
+ */
+export interface Rank {
+  id: string;
+  rank: string;
+  created_at: string;
+}
+
+/**
+ * 生データの型
+ */
+
+export interface rawData {
+  id: string;
+  student_id: string;
+  work_id: string;
+  work_url: string;
+  work_time: number;
+  rank_id?: string;
+  comment?: string;
+  created_at: string;
+  works: Work;
+  ranks: Rank;
+  students: Student;
 }
 
 /**
@@ -37,14 +97,6 @@ export interface Data {
 }
 
 /**
- * ランクの型
- */
-export interface Rank {
-  id: string;
-  rank: string;
-}
-
-/**
  * 評価データの型
  */
 export interface Update {
@@ -58,24 +110,30 @@ export interface Update {
 }
 
 const supabase = createClient(
-  Deno.env.get("SUPABASE_URL"),
-  Deno.env.get("SUPABASE_ANON"),
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_ANON") ?? "",
   {},
 );
 
-const createFantasticData = (rawData): Post[] =>
-  rawData.map((x) => ({
-    ...x,
+const createFantasticData = (rawData: rawData[] | null): Post[] | [] => {
+  const data = rawData?.map((x: rawData) => ({
+    ...{
+      id: x.id,
+      work_url: x.work_url,
+      work_time: x.work_time,
+      comment: x.comment,
+      created_at: x.created_at,
+    },
     ...{
       work: x.works.work_number,
-      work_description: x.works.description,
+      // work_description: x.works.description,
       student: x.students.name,
       student_number: x.students.student_number,
       class: x.students.classes.class_name,
       rank: x.ranks?.rank,
       rank_id: x.ranks?.id,
     },
-  })).sort((a, b) => {
+  })).sort((a: Post, b: Post) => {
     if (a.class > b.class) return -1;
     if (a.class < b.class) return 1;
     if (a.work > b.work) return -1;
@@ -84,13 +142,15 @@ const createFantasticData = (rawData): Post[] =>
     if (a.student_number < b.student_number) return -1;
     return 0;
   });
+  return data ?? [];
+};
 
 /**
  * すべての記事を取得する
  */
 export const findAllPosts = async (): Promise<Post[] | []> => {
   try {
-    const { data, error } = await supabase
+    const { data, error }: PostgrestResponse<rawData> = await supabase
       .from("posts")
       .select("*, works(*), ranks(*), students(*, classes(*))");
     // .order("class_name", {
@@ -114,7 +174,7 @@ export const findAllPosts = async (): Promise<Post[] | []> => {
  */
 export const findPostById = async (id: string): Promise<Post | null> => {
   try {
-    const { data, error } = await supabase
+    const { data, error }: PostgrestResponse<rawData> = await supabase
       .from("posts")
       .select("*,works(*),ranks(*),students(*,classes(*))")
       .match({ id: [id] });
@@ -205,7 +265,7 @@ const isExistsSameWork = async (
       .select()
       .match({ work_id, student_id });
     console.log(data);
-    return data.length !== 0;
+    return data?.length !== 0;
   } catch (e) {
     console.error(e);
     return null;
@@ -217,7 +277,7 @@ const isExistsSameWork = async (
  */
 export const createPost = async (
   post: Pick<Data, "work_id" | "student_id" | "work_url" | "work_time">,
-): Promise<Post[] | null> => {
+): Promise<undefined[] | null> => {
   try {
     const { work_id, student_id, work_url, work_time } = post;
     if (await isExistsSameWork(post)) {
@@ -245,7 +305,7 @@ export const getRanks = async (): Promise<Rank[] | null> => {
   try {
     const { data, error } = await supabase
       .from("ranks")
-      .select("id, rank")
+      .select("id, rank, created_at")
       .order("id", { ascending: true });
     return data;
   } catch (e) {
@@ -259,7 +319,7 @@ export const getRanks = async (): Promise<Rank[] | null> => {
  */
 export const updatePost = async (
   update: Pick<Update, "id" | "rank_id" | "comment">,
-): Promise<Post[] | null> => {
+): Promise<undefined[] | null> => {
   try {
     const { data, error } = await supabase
       .from("posts")
