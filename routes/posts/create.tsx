@@ -6,11 +6,10 @@ import { PostsMenu } from '../../components/PostsMenu.tsx'
 import { PageTitle } from '../../components/PageTitle.tsx'
 
 export const handler: Handlers<Data> = {
-  async GET(req, ctx) {
+  async GET(_, ctx) {
     const students = await getStudents();
     const works = await getWorks();
     return ctx.render({ students, works });
-
   },
   async POST(req, ctx) {
     const formData = await req.formData();
@@ -94,7 +93,7 @@ export default function CreatePostPage({
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option value="">-</option>
-                  {data?.works.map((x) =>
+                  {data?.works?.map((x) =>
                     <option value={x.id}>{x.work_number} {x.description}</option>
                   )}
                 </select>
@@ -115,8 +114,7 @@ export default function CreatePostPage({
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option value="">-</option>
-
-                  {data?.students.map((x) =>
+                  {data?.students?.map((x) =>
                     <option value={x.id}>{x.student_number} {x.name}</option>
                   )}
                 </select>
