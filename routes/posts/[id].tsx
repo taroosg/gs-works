@@ -6,12 +6,12 @@ import dayjs from "https://esm.sh/dayjs@1.11.3";
 import { PostsMenu } from '../../components/PostsMenu.tsx'
 import { PageTitle } from '../../components/PageTitle.tsx'
 
-interface Hoge {
-  post: unknown;
-  ranks: unknown;
+interface PostResult {
+  post: Post;
+  ranks: Rank[];
 }
 
-export const handler: Handlers<Hoge | Update | null> = {
+export const handler: Handlers<PostResult | Update | null> = {
   async GET(_, ctx) {
 
     const { id } = ctx.params;
@@ -28,7 +28,7 @@ export const handler: Handlers<Hoge | Update | null> = {
 };
 
 
-export default function PostPage({ data }: PageProps<Hoge | null>) {
+export default function PostPage({ data }: PageProps<PostResult | null>) {
 
   if (!data) {
     return <div>Not Found</div>;
