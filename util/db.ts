@@ -6,6 +6,20 @@ import { createClient, PostgrestResponse } from "supabase";
  */
 export interface Post {
   id: string;
+  student_id: string;
+  work_id: string;
+  work_url: string;
+  rank_id: string;
+  comment?: string;
+  work_time: number;
+  created_at: string;
+}
+
+/**
+ * ほしい形にしたPostデータの型
+ */
+export interface PostOptimized {
+  id: string;
   work_url: string;
   work_time: number;
   comment?: string;
@@ -62,22 +76,13 @@ export interface Rank {
 }
 
 /**
- * 生データの型
+ * Post他，生データの型
  */
-
-export interface rawData {
-  id: string;
-  student_id: string;
-  work_id: string;
-  work_url: string;
-  work_time: number;
-  rank_id?: string;
-  comment?: string;
-  created_at: string;
+export type PostRaw = Post & {
   works: Work;
   ranks: Rank;
   students: Student;
-}
+};
 
 /**
  * 送信データの型
@@ -105,7 +110,7 @@ export interface Data {
  * 評価データの型
  */
 export interface Update {
-  post: Post | null;
+  post: PostOptimized | null;
   ranks: Rank[] | null;
   error?: {
     id: string;
@@ -122,8 +127,10 @@ const supabase = createClient(
   {},
 );
 
-const createFantasticData = (rawData: rawData[] | null): Post[] | [] => {
-  const data = rawData?.map((x: rawData) => ({
+const createFantasticData = (
+  rawData: PostRaw[] | null,
+): PostOptimized[] | [] => {
+  const data = rawData?.map((x: PostRaw) => ({
     ...{
       id: x.id,
       work_url: x.work_url,
@@ -140,7 +147,7 @@ const createFantasticData = (rawData: rawData[] | null): Post[] | [] => {
       rank: x.ranks?.rank,
       rank_id: x.ranks?.id,
     },
-  })).sort((a: Post, b: Post) => {
+  })).sort((a: PostOptimized, b: PostOptimized) => {
     if (a.class > b.class) return -1;
     if (a.class < b.class) return 1;
     if (a.work > b.work) return -1;
@@ -155,9 +162,9 @@ const createFantasticData = (rawData: rawData[] | null): Post[] | [] => {
 /**
  * すべての記事を取得する
  */
-export const findAllPosts = async (): Promise<Post[] | []> => {
+export const findAllPosts = async (): Promise<PostOptimized[] | []> => {
   try {
-    const { data, error }: PostgrestResponse<rawData> = await supabase
+    const { data, error }: PostgrestResponse<PostRaw> = await supabase
       .from("posts")
       .select("*, works(*), ranks(*), students(*, classes(*))");
     // .order("class_name", {
@@ -179,9 +186,11 @@ export const findAllPosts = async (): Promise<Post[] | []> => {
 /**
  * ID を指定して記事を取得する
  */
-export const findPostById = async (id: string): Promise<Post | null> => {
+export const findPostById = async (
+  id: string,
+): Promise<PostOptimized | null> => {
   try {
-    const { data, error }: PostgrestResponse<rawData> = await supabase
+    const { data, error }: PostgrestResponse<PostRaw> = await supabase
       .from("posts")
       .select("*,works(*),ranks(*),students(*,classes(*))")
       .match({ id: [id] });
@@ -253,9 +262,9 @@ export const getWorks = async (): Promise<Work[] | null> => {
 /**
  * すごい課題一覧を取得する
  */
-export const findFantasticPosts = async (): Promise<Post[] | []> => {
+export const findFantasticPosts = async (): Promise<PostOptimized[] | []> => {
   try {
-    const { data, error }: PostgrestResponse<rawData> = await supabase
+    const { data, error }: PostgrestResponse<PostRaw> = await supabase
       .from("posts")
       .select("*, works(*), ranks(*), students(*, classes(*))")
       .match({ rank_id: 1 });

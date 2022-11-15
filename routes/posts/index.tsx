@@ -3,21 +3,21 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ja";
-import { Post, findAllPosts } from "@db";
+import { Post, findAllPosts, PostOptimized } from "@db";
 import { PostsMenu } from '../../components/PostsMenu.tsx'
 import { PageTitle } from '../../components/PageTitle.tsx'
 
 dayjs.extend(relativeTime);
 dayjs.locale("ja");
 
-export const handler: Handlers<Post[]> = {
+export const handler: Handlers<PostOptimized[]> = {
   async GET(_, ctx) {
     const posts = await findAllPosts();
     return ctx.render(posts);
   },
 };
 
-export default function PostsPage({ data }: PageProps<Post[]>) {
+export default function PostsPage({ data }: PageProps<PostOptimized[]>) {
   return (
     <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
@@ -59,7 +59,7 @@ export default function PostsPage({ data }: PageProps<Post[]>) {
                 </tr>
               </thead>
               <tbody>
-                {data.map((post: Post) => (
+                {data.map((post: PostOptimized) => (
                   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {post.work}

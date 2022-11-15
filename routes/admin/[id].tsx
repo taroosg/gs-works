@@ -1,12 +1,12 @@
 import { PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/src/runtime/head.ts";
 import { Handlers } from "$fresh/server.ts";
-import { Post, Update, Rank, findPostById, getRanks, updatePost } from "@db";
+import { Post, Update, Rank, findPostById, getRanks, updatePost, PostOptimized } from "@db";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
 import { PageTitle } from '../../components/PageTitle.tsx'
 
 interface PostResult {
-  post: Post;
+  post: PostOptimized;
   ranks: Rank[];
   error?: {
     id: string;
