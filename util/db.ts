@@ -164,7 +164,7 @@ const createFantasticData = (
  */
 export const findAllPosts = async (): Promise<PostOptimized[] | []> => {
   try {
-    const { data, error }: PostgrestResponse<PostRaw> = await supabase
+    const { data }: PostgrestResponse<PostRaw> = await supabase
       .from("posts")
       .select("*, works(*), ranks(*), students(*, classes(*))");
     // .order("class_name", {
@@ -190,7 +190,7 @@ export const findPostById = async (
   id: string,
 ): Promise<PostOptimized | null> => {
   try {
-    const { data, error }: PostgrestResponse<PostRaw> = await supabase
+    const { data }: PostgrestResponse<PostRaw> = await supabase
       .from("posts")
       .select("*,works(*),ranks(*),students(*,classes(*))")
       .match({ id: [id] });
@@ -206,7 +206,7 @@ export const findPostById = async (
  */
 export const getClasses = async (): Promise<Class[] | null> => {
   try {
-    const { data, error }: PostgrestResponse<Class> = await supabase
+    const { data }: PostgrestResponse<Class> = await supabase
       .from("classes")
       .select("id, class_name, started_at, ended_at, created_at")
       .lte("started_at", new Date().toLocaleDateString())
@@ -229,7 +229,7 @@ export const getStudents = async (): Promise<Student[] | null> => {
       "id" | "class_name" | "started_at" | "ended_at"
     >[] | null = await getClasses();
     const classIds = classes === null ? [] : classes.map((x) => x.id);
-    const { data, error }: PostgrestResponse<Student> = await supabase
+    const { data }: PostgrestResponse<Student> = await supabase
       .from("students")
       .select(
         "*, classes(*)",
@@ -248,7 +248,7 @@ export const getStudents = async (): Promise<Student[] | null> => {
  */
 export const getWorks = async (): Promise<Work[] | null> => {
   try {
-    const { data, error }: PostgrestResponse<Work> = await supabase
+    const { data }: PostgrestResponse<Work> = await supabase
       .from("works")
       .select("id, work_number, description, created_at")
       .order("work_number", { ascending: true });
@@ -264,7 +264,7 @@ export const getWorks = async (): Promise<Work[] | null> => {
  */
 export const findFantasticPosts = async (): Promise<PostOptimized[] | []> => {
   try {
-    const { data, error }: PostgrestResponse<PostRaw> = await supabase
+    const { data }: PostgrestResponse<PostRaw> = await supabase
       .from("posts")
       .select("*, works(*), ranks(*), students(*, classes(*))")
       .match({ rank_id: 1 });
@@ -281,7 +281,7 @@ const isExistsSameWork = async (
 ): Promise<boolean | null> => {
   try {
     const { work_id, student_id } = post;
-    const { data, error }: PostgrestResponse<Post> = await supabase
+    const { data }: PostgrestResponse<Post> = await supabase
       .from("posts")
       .select()
       .match({ work_id, student_id });
@@ -301,13 +301,13 @@ export const createPost = async (
   try {
     const { work_id, student_id, work_url, work_time } = post;
     if (await isExistsSameWork(post)) {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("posts")
         .update({ work_url, work_time })
         .match({ work_id, student_id });
       return data;
     } else {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("posts")
         .insert(post);
       return data;
@@ -323,7 +323,7 @@ export const createPost = async (
  */
 export const getRanks = async (): Promise<Rank[] | null> => {
   try {
-    const { data, error }: PostgrestResponse<Rank> = await supabase
+    const { data }: PostgrestResponse<Rank> = await supabase
       .from("ranks")
       .select("id, rank, created_at")
       .order("id", { ascending: true });
@@ -341,7 +341,7 @@ export const updatePost = async (
   update: Pick<Update, "id" | "rank_id" | "comment">,
 ): Promise<undefined[] | null> => {
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("posts")
       .update({
         rank_id: update.rank_id === "" ? null : update.rank_id,
