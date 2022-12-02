@@ -13,6 +13,7 @@ export async function handler(
   req: Request,
   ctx: MiddlewareHandlerContext<State>,
 ) {
+  console.log(req.headers.get("host"));
   if (req.headers.get("host") !== HOST) {
     return new Response("Forbidden", { status: 403 });
   }
