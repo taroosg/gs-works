@@ -3,7 +3,7 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ja";
-import { Post, Show, findAllPosts, findPostsByClass, PostOptimized, findPostsByClassAndWork, findPostsByWork, getClasses, getWorks } from "@db";
+import { Show, findAllPosts, PostOptimized, findPostsByClassAndWork, getClasses, getWorks } from "@db";
 import { PostsMenu } from '../../components/PostsMenu.tsx'
 import { PageTitle } from '../../components/PageTitle.tsx'
 
@@ -25,16 +25,11 @@ export const handler: Handlers<Show> = {
     const work_id = formData.get("work_id")?.toString() ?? '';
 
     const [posts, classes, works] = await Promise.all([
-      (class_id && work_id)
-        ? await findPostsByClassAndWork(class_id, work_id) ?? []
-        : class_id
-          ? await findPostsByClass(class_id) ?? []
-          : work_id
-            ? await findPostsByWork(work_id) ?? []
-            : await findAllPosts() ?? [],
+      findPostsByClassAndWork(class_id, work_id) ?? [],
       getClasses(),
       getWorks(),
     ]);
+
     return ctx.render({ posts , classes, works, class_id, work_id});
   },
 };

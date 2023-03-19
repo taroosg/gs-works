@@ -212,55 +212,30 @@ export const findPostById = async (
 };
 
 /**
- * クラス を指定して記事を取得する
- */
-export const findPostsByClass = async (class_id:string): Promise<PostOptimized[] | []> => {
-  try {
-    const students = await supabase
-      .from("students")
-      .select("id")
-      .match({ class_id: class_id });
-    const { data }: PostgrestResponse<PostRaw> = await supabase
-      .from("posts")
-      .select("*,works(*),ranks(*),students(*,classes(*))")
-      .in("student_id",students.data?.map(x => x.id) ?? [])
-    return createFantasticData(data);
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
-};
-
-/**
- * 課題 を指定して記事を取得する
- */
-export const findPostsByWork = async (work_id:string): Promise<PostOptimized[] | []> => {
-  try {
-    const { data }: PostgrestResponse<PostRaw> = await supabase
-      .from("posts")
-      .select("*,works(*),ranks(*),students(*,classes(*))")
-      .in("work_id",[work_id] ?? []);
-    return createFantasticData(data);
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
-};
-
-/**
  * クラスと課題 を指定して記事を取得する
  */
-export const findPostsByClassAndWork = async (class_id:string, work_id:string): Promise<PostOptimized[] | []> => {
+export const findPostsByClassAndWork = async (class_id?:string, work_id?:string): Promise<PostOptimized[] | []> => {
   try {
-    const students = await supabase
-      .from("students")
-      .select("id")
-      .match({ class_id: class_id });
-    const { data }: PostgrestResponse<PostRaw> = await supabase
+    const students = class_id
+      ? (await supabase
+        .from("students")
+        .select("id")
+        .match({ class_id: class_id })).data?.map(x => x.id)
+      : [];
+    const query = supabase
       .from("posts")
-      .select("*,works(*),ranks(*),students(*,classes(*))")
-      .in("student_id",students.data?.map(x => x.id) ?? [])
-      .eq("work_id",work_id);
+      .select("*,works(*),ranks(*),students(*,classes(*))");
+
+    const filteredByClass = class_id
+      ? query.in("student_id", students ?? [])
+      : query;
+
+    const filteredByWork = work_id
+      ? filteredByClass.eq("work_id", work_id)
+      : query;
+
+    const { data } = await filteredByWork;
+
     return createFantasticData(data);
   } catch (e) {
     console.error(e);
@@ -327,14 +302,35 @@ export const getWorks = async (): Promise<Work[] | null> => {
 };
 
 /**
- * すごい課題一覧を取得する
+ * クラスと課題 を指定してすごい課題一覧を取得する
  */
-export const findFantasticPosts = async (): Promise<PostOptimized[] | []> => {
+export const findFantasticPosts = async (class_id?:string, work_id?:string): Promise<PostOptimized[]> => {
   try {
-    const { data }: PostgrestResponse<PostRaw> = await supabase
+
+    const students = class_id
+      ? (await supabase
+        .from("students")
+        .select("id")
+        .match({ class_id: class_id })).data?.map(x => x.id)
+      : [];
+    const query = supabase
       .from("posts")
-      .select("*, works(*), ranks(*), students(*, classes(*))")
-      .match({ rank_id: 1 });
+      .select("*,works(*),ranks(*),students(*,classes(*))");
+
+    const filteredByClass = class_id
+      ? query.in("student_id", students ?? [])
+      : query;
+
+    const filteredByWork = work_id
+      ? filteredByClass.eq("work_id", work_id)
+      : query;
+
+    const { data } = await filteredByWork.match({ rank_id: 1 });
+
+    // const { data }: PostgrestResponse<PostRaw> = await supabase
+    //   .from("posts")
+    //   .select("*, works(*), ranks(*), students(*, classes(*))")
+    //   .match({ rank_id: 1 });
     return createFantasticData(data);
   } catch (e) {
     console.error(e);
