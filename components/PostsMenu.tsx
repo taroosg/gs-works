@@ -1,6 +1,6 @@
 export const PostsMenu = () => {
   return (
-    <section class="mt-8 flex justify-center">
+    <section class="flex justify-center">
       <a href="/posts/create" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
         提出する
       </a>
