@@ -251,7 +251,23 @@ export const getClasses = async (): Promise<Class[] | null> => {
     const { data }: PostgrestResponse<Class> = await supabase
       .from("classes")
       .select("id, class_name, started_at, ended_at, created_at")
-      // .lte("started_at", new Date().toLocaleDateString())
+      .order("started_at", { ascending: false });
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+/**
+ * 開講中のクラス一覧を取得する
+ */
+export const getNowClasses = async (): Promise<Class[] | null> => {
+  try {
+    const { data }: PostgrestResponse<Class> = await supabase
+      .from("classes")
+      .select("id, class_name, started_at, ended_at, created_at")
+      .lte("started_at", new Date().toLocaleDateString())
       .gte("ended_at", new Date().toLocaleDateString())
       .order("started_at", { ascending: false });
     return data;
@@ -269,7 +285,7 @@ export const getStudents = async (): Promise<Student[] | null> => {
     const classes: Pick<
       Class,
       "id" | "class_name" | "started_at" | "ended_at"
-    >[] | null = await getClasses();
+    >[] | null = await getNowClasses();
     const classIds = classes === null ? [] : classes.map((x) => x.id);
     const { data }: PostgrestResponse<Student> = await supabase
       .from("students")
