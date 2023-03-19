@@ -37,11 +37,12 @@ export interface PostOptimized {
  * 画面表示用のデータの型
  */
 export interface Show {
-  posts: PostOptimized[] | null;
+  posts?: PostOptimized[] | null;
   works: Work[] | null;
   classes: Class[] | null;
   work_id?: string | null;
   class_id?: string | null;
+  is_post?: boolean;
 }
 /**
  * workテーブルの型
@@ -194,6 +195,23 @@ export const findAllPosts = async (): Promise<PostOptimized[] | []> => {
 };
 
 /**
+ * 最近の記事20件を取得する
+ */
+export const findRecentPosts = async (): Promise<PostOptimized[] | []> => {
+  try {
+    const { data }: PostgrestResponse<PostRaw> = await supabase
+      .from("posts")
+      .select("*, works(*), ranks(*), students(*, classes(*))")
+      .order("created_at", { ascending: false })
+      .limit(20);
+    return createFantasticData(data);
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
+
+/**
  * ID を指定して記事を取得する
  */
 export const findPostById = async (
@@ -214,13 +232,16 @@ export const findPostById = async (
 /**
  * クラスと課題 を指定して記事を取得する
  */
-export const findPostsByClassAndWork = async (class_id?:string, work_id?:string): Promise<PostOptimized[] | []> => {
+export const findPostsByClassAndWork = async (
+  class_id?: string,
+  work_id?: string,
+): Promise<PostOptimized[] | []> => {
   try {
     const students = class_id
       ? (await supabase
         .from("students")
         .select("id")
-        .match({ class_id: class_id })).data?.map(x => x.id)
+        .match({ class_id: class_id })).data?.map((x) => x.id)
       : [];
     const query = supabase
       .from("posts")
@@ -320,14 +341,16 @@ export const getWorks = async (): Promise<Work[] | null> => {
 /**
  * クラスと課題 を指定してすごい課題一覧を取得する
  */
-export const findFantasticPosts = async (class_id?:string, work_id?:string): Promise<PostOptimized[]> => {
+export const findFantasticPosts = async (
+  class_id?: string,
+  work_id?: string,
+): Promise<PostOptimized[]> => {
   try {
-
     const students = class_id
       ? (await supabase
         .from("students")
         .select("id")
-        .match({ class_id: class_id })).data?.map(x => x.id)
+        .match({ class_id: class_id })).data?.map((x) => x.id)
       : [];
     const query = supabase
       .from("posts")

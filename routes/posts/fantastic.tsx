@@ -47,7 +47,7 @@ export default function FantasticPage({ data }: PageProps<Show>) {
         <PageTitle pageTitle="G's Work Posts" link="/" />
         <PostsMenu />
         <section>
-          <PageSubTitle pageSubTitle="Posts" />
+          <PageSubTitle pageSubTitle="Fantastic Posts" />
           <IndexForm
             class_id={data.class_id ?? ""}
             work_id={data.work_id ?? ""}

@@ -7,10 +7,10 @@ interface FormParams {
   works: Work[]
 }
 
-export const IndexForm = ({ class_id, work_id, classes, works }:FormParams) => {
+export const IndexForm = ({ class_id, work_id, classes, works }: FormParams) => {
   return (
     <form
-      class="mb-4"
+      class="border dark:border-gray-700 p-4 mb-4 shadow-md bg-gray-50 dark:bg-gray-800 dark:text-gray-400"
       method="POST"
     >
       <div class="flex flex-col gap-y-2">
@@ -19,13 +19,13 @@ export const IndexForm = ({ class_id, work_id, classes, works }:FormParams) => {
             for="class_id"
             class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400"
           >
-            クラス指定
+            クラス
           </label>
           <select
             id="class_id"
             name="class_id"
             value={class_id ?? ""}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option value="">-</option>
             {
@@ -42,13 +42,13 @@ export const IndexForm = ({ class_id, work_id, classes, works }:FormParams) => {
             for="work_id"
             class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400"
           >
-            課題指定
+            課題
           </label>
           <select
             id="work_id"
             name="work_id"
             value={work_id ?? ""}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option value="">-</option>
             {
@@ -62,7 +62,7 @@ export const IndexForm = ({ class_id, work_id, classes, works }:FormParams) => {
         </div>
       </div>
       <div class="flex justify-end mt-4">
-        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
           検索
         </button>
       </div>

@@ -3,7 +3,7 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ja";
-import { Show, findAllPosts, PostOptimized, findPostsByClassAndWork, getClasses, getWorks } from "@db";
+import { Show, findPostsByClassAndWork, getClasses, getWorks } from "@db";
 import { PageTitle } from '../../components/PageTitle.tsx'
 import { PageSubTitle } from '../../components/PageSubTitle.tsx'
 import { IndexForm } from "../../components/IndexForm.tsx";
@@ -15,7 +15,7 @@ dayjs.locale("ja");
 export const handler: Handlers<Show> = {
   async GET(_, ctx) {
     const [posts, classes, works] = await Promise.all([
-      findAllPosts(),
+      [],
       getClasses(),
       getWorks(),
     ]);
@@ -32,7 +32,9 @@ export const handler: Handlers<Show> = {
       getWorks(),
     ]);
 
-    return ctx.render({ posts, classes, works, class_id, work_id });
+    const is_post = true;
+
+    return ctx.render({ posts, classes, works, class_id, work_id, is_post });
   },
 };
 
@@ -54,11 +56,22 @@ export default function Home({ data }: PageProps<Show>) {
           />
         </section>
         <section>
-          <PostsTable
-            posts={data.posts ?? []}
-            isAdmin={true}
-          />
-       </section>
+          {
+            data.posts && data.posts.length > 0
+              ?
+              <PostsTable
+                posts={data.posts ?? []}
+                isAdmin={true}
+              />
+              :
+              data.is_post
+                ?
+                <p class="block mb-8 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Not found...
+                </p>
+                : ''
+          }
+        </section>
       </div>
     </div >
   );
