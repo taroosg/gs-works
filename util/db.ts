@@ -34,6 +34,16 @@ export interface PostOptimized {
 }
 
 /**
+ * 画面表示用のデータの型
+ */
+export interface Show {
+  posts: PostOptimized[] | null;
+  works: Work[] | null;
+  classes: Class[] | null;
+  work_id?: string | null;
+  class_id?: string | null;
+}
+/**
  * workテーブルの型
  */
 export interface Work {
@@ -202,6 +212,63 @@ export const findPostById = async (
 };
 
 /**
+ * クラス を指定して記事を取得する
+ */
+export const findPostsByClass = async (class_id:string): Promise<PostOptimized[] | []> => {
+  try {
+    const students = await supabase
+      .from("students")
+      .select("id")
+      .match({ class_id: class_id });
+    const { data }: PostgrestResponse<PostRaw> = await supabase
+      .from("posts")
+      .select("*,works(*),ranks(*),students(*,classes(*))")
+      .in("student_id",students.data?.map(x => x.id) ?? [])
+    return createFantasticData(data);
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
+
+/**
+ * 課題 を指定して記事を取得する
+ */
+export const findPostsByWork = async (work_id:string): Promise<PostOptimized[] | []> => {
+  try {
+    const { data }: PostgrestResponse<PostRaw> = await supabase
+      .from("posts")
+      .select("*,works(*),ranks(*),students(*,classes(*))")
+      .in("work_id",[work_id] ?? []);
+    return createFantasticData(data);
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
+
+/**
+ * クラスと課題 を指定して記事を取得する
+ */
+export const findPostsByClassAndWork = async (class_id:string, work_id:string): Promise<PostOptimized[] | []> => {
+  try {
+    const students = await supabase
+      .from("students")
+      .select("id")
+      .match({ class_id: class_id });
+    const { data }: PostgrestResponse<PostRaw> = await supabase
+      .from("posts")
+      .select("*,works(*),ranks(*),students(*,classes(*))")
+      .in("student_id",students.data?.map(x => x.id) ?? [])
+      .eq("work_id",work_id);
+    return createFantasticData(data);
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+};
+
+/**
  * クラス一覧を取得する
  */
 export const getClasses = async (): Promise<Class[] | null> => {
@@ -209,7 +276,7 @@ export const getClasses = async (): Promise<Class[] | null> => {
     const { data }: PostgrestResponse<Class> = await supabase
       .from("classes")
       .select("id, class_name, started_at, ended_at, created_at")
-      .lte("started_at", new Date().toLocaleDateString())
+      // .lte("started_at", new Date().toLocaleDateString())
       .gte("ended_at", new Date().toLocaleDateString())
       .order("started_at", { ascending: false });
     return data;

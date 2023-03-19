@@ -3,21 +3,43 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ja";
-import { Post, findAllPosts, PostOptimized } from "@db";
+import { Post, Show, findAllPosts, findPostsByClass, PostOptimized, findPostsByClassAndWork, findPostsByWork, getClasses, getWorks } from "@db";
 import { PostsMenu } from '../../components/PostsMenu.tsx'
 import { PageTitle } from '../../components/PageTitle.tsx'
 
 dayjs.extend(relativeTime);
 dayjs.locale("ja");
 
-export const handler: Handlers<PostOptimized[]> = {
+export const handler: Handlers<Show> = {
   async GET(_, ctx) {
-    const posts = await findAllPosts();
-    return ctx.render(posts);
+    const [posts, classes, works] = await Promise.all([
+      findAllPosts(),
+      getClasses(),
+      getWorks(),
+    ]);
+    return ctx.render({ posts , classes, works });
+  },
+  async POST(req, ctx) {
+    const formData = await req.formData();
+    const class_id = formData.get("class_id")?.toString() ?? '';
+    const work_id = formData.get("work_id")?.toString() ?? '';
+
+    const [posts, classes, works] = await Promise.all([
+      (class_id && work_id)
+        ? await findPostsByClassAndWork(class_id, work_id) ?? []
+        : class_id
+          ? await findPostsByClass(class_id) ?? []
+          : work_id
+            ? await findPostsByWork(work_id) ?? []
+            : await findAllPosts() ?? [],
+      getClasses(),
+      getWorks(),
+    ]);
+    return ctx.render({ posts , classes, works, class_id, work_id});
   },
 };
 
-export default function PostsPage({ data }: PageProps<PostOptimized[]>) {
+export default function PostsPage({ data }: PageProps<Show>) {
   return (
     <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
@@ -28,6 +50,29 @@ export default function PostsPage({ data }: PageProps<PostOptimized[]>) {
         <PostsMenu />
         <section class="mt-8">
           <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">Posts</h2>
+          <form method="POST">
+            <select name="class_id" id="" value={data.class_id ?? ""}>
+              <option value="">-</option>
+              {
+                data.classes?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.class_name}
+                  </option>
+                ))
+              }
+            </select>
+            <select name="work_id" id="" value={data.work_id ?? ""}>
+              <option value="">-</option>
+              {
+                data.works?.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {`${w.work_number} ${w.description}`}
+                  </option>
+                ))
+              }
+            </select>
+            <button>submit</button>
+          </form>
           <div class="overflow-x-auto relative shadow-md">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -59,7 +104,7 @@ export default function PostsPage({ data }: PageProps<PostOptimized[]>) {
                 </tr>
               </thead>
               <tbody>
-                {data.map((post: PostOptimized) => (
+                {data.posts?.map((post: PostOptimized) => (
                   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {post.work}
