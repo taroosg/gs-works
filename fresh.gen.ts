@@ -14,7 +14,8 @@ import * as $7 from "./routes/posts/_middleware.ts";
 import * as $8 from "./routes/posts/create.tsx";
 import * as $9 from "./routes/posts/fantastic.tsx";
 import * as $10 from "./routes/posts/index.tsx";
-import * as $$0 from "./islands/Counter.tsx";
+import * as $$0 from "./islands/BackButton.tsx";
+import * as $$1 from "./islands/Counter.tsx";
 
 const manifest = {
   routes: {
@@ -31,7 +32,8 @@ const manifest = {
     "./routes/posts/index.tsx": $10,
   },
   islands: {
-    "./islands/Counter.tsx": $$0,
+    "./islands/BackButton.tsx": $$0,
+    "./islands/Counter.tsx": $$1,
   },
   baseUrl: import.meta.url,
   config,

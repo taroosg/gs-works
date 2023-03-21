@@ -1,9 +1,9 @@
 import { PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/src/runtime/head.ts";
 import { Handlers } from "$fresh/server.ts";
-import { Post, Update, Rank, findPostById, getRanks, updatePost, PostOptimized } from "@db";
-import dayjs from "https://esm.sh/dayjs@1.11.3";
+import { Update, Rank, findPostById, getRanks, updatePost, PostOptimized } from "@db";
 import { PageTitle } from '../../components/PageTitle.tsx'
+import BackButton from "../../islands/BackButton.tsx";
 
 interface PostResult {
   post: PostOptimized;
@@ -82,9 +82,6 @@ export default function PostPage({ data }: PageProps<PostResult | null>) {
         class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pt-12 pb-20 flex flex-col">
         <header>
           <PageTitle pageTitle="G's Work Admin" link="/admin" />
-          {/* <time class="text-gray-500 text-sm" dateTime={data.post.created_at}>
-            {dayjs(data.post.created_at).format("YYYY-MM-DD HH:mm:ss")}
-          </time> */}
         </header>
         <section class="mt-8">
           <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">
@@ -187,7 +184,7 @@ export default function PostPage({ data }: PageProps<PostResult | null>) {
 
         <section>
           <form
-            class="rounded-xl border dark:border-gray-700 p-5 shadow-md bg-gray-50 dark:bg-gray-800 dark:text-gray-400 mt-8"
+            class="border dark:border-gray-700 p-4 shadow-md bg-gray-50 dark:bg-gray-800 dark:text-gray-400 mt-8"
             method="POST"
           >
             <div class="flex flex-col gap-y-2">
@@ -199,7 +196,7 @@ export default function PostPage({ data }: PageProps<PostResult | null>) {
                   Rank
                 </label>
                 <select
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   name="rank" id="rank"
                   defaultValue={data.post.rank_id}
                 >
@@ -222,7 +219,7 @@ export default function PostPage({ data }: PageProps<PostResult | null>) {
                 <textarea
                   id="comment"
                   rows={5}
-                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   name="comment"
                   value={data.post.comment}
                   placeholder="推薦の場合はコメントを入力してください．"
@@ -230,12 +227,8 @@ export default function PostPage({ data }: PageProps<PostResult | null>) {
               </div>
             </div>
             <div class="flex justify-end mt-4">
-              <a href="/admin">
-                <button type="button" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                  Back
-                </button>
-              </a>
-              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+              <BackButton />
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                 Submit
               </button>
             </div>
