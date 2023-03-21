@@ -3,101 +3,74 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.3";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ja";
-import { Post, findAllPosts, PostOptimized } from "@db";
+import { Show, findPostsByClassAndWork, getClasses, getWorks } from "@db";
 import { PageTitle } from '../../components/PageTitle.tsx'
+import { PageSubTitle } from '../../components/PageSubTitle.tsx'
+import { IndexForm } from "../../components/IndexForm.tsx";
+import { PostsTable } from "../../components/PostsTable.tsx";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ja");
 
-export const handler: Handlers<PostOptimized[]> = {
+export const handler: Handlers<Show> = {
   async GET(_, ctx) {
-    const posts = await findAllPosts();
-    return ctx.render(posts);
+    const [posts, classes, works] = await Promise.all([
+      [],
+      getClasses(),
+      getWorks(),
+    ]);
+    return ctx.render({ posts, classes, works });
+  },
+  async POST(req, ctx) {
+    const formData = await req.formData();
+    const class_id = formData.get("class_id")?.toString() ?? '';
+    const work_id = formData.get("work_id")?.toString() ?? '';
+
+    const [posts, classes, works] = await Promise.all([
+      findPostsByClassAndWork(class_id, work_id) ?? [],
+      getClasses(),
+      getWorks(),
+    ]);
+
+    const is_post = true;
+
+    return ctx.render({ posts, classes, works, class_id, work_id, is_post });
   },
 };
 
-export default function Home({ data }: PageProps<PostOptimized[]>) {
+export default function Home({ data }: PageProps<Show>) {
   return (
     <div class="min-h-screen bg-gray-200 dark:bg-gray-800">
       <Head>
         <title>G's Work Admin</title>
       </Head>
-      <div class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pt-12 pb-20 flex flex-col">
+      <div class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pb-20 flex flex-col">
         <PageTitle pageTitle="G's Work Admin" link="/admin" />
-        <section class="mt-8">
-          <div class="flex justify-between items-center">
-            <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">Posts</h2>
-          </div>
-          <div class="overflow-x-auto relative shadow-md">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" class="py-3 px-6">
-                    work
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    class
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    number
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    name
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    rank
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    url
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    time
-                  </th>
-                  <th scope="col" class="py-3 px-6">
-                    <span class="sr-only">Edit</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((post: PostOptimized) => (
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {post.work}
-                    </th>
-                    <td class="py-4 px-6">
-                      {post.class}
-                    </td>
-                    <td class="py-4 px-6">
-                      {post.student_number}
-                    </td>
-                    <td class="py-4 px-6">
-                      {post.student}
-                    </td>
-                    <td class="py-4 px-6">
-                      {post.rank}
-                    </td>
-                    <td class="py-4 px-6">
-                      <a
-                        href={post.work_url}
-                        target="_blank"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                      >
-                        Link
-                      </a>
-                    </td>
-                    <td class="py-4 px-6">
-                      {post.work_time}
-                    </td>
-                    <td class="py-4 px-6 text-right">
-                      <a href={`admin/${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                        admin
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <section>
+          <PageSubTitle pageSubTitle="課題チェックページ" />
+          <IndexForm
+            class_id={data.class_id ?? ""}
+            work_id={data.work_id ?? ""}
+            classes={data.classes ?? []}
+            works={data.works ?? []}
+          />
+        </section>
+        <section>
+          {
+            data.posts && data.posts.length > 0
+              ?
+              <PostsTable
+                posts={data.posts ?? []}
+                isAdmin={true}
+              />
+              :
+              data.is_post
+                ?
+                <p class="block mb-8 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Not found...
+                </p>
+                : ''
+          }
         </section>
       </div>
     </div >

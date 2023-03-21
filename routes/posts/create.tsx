@@ -4,6 +4,7 @@ import { Handlers } from "$fresh/server.ts";
 import { Data, createPost, getStudents, getWorks } from "@db";
 import { PostsMenu } from '../../components/PostsMenu.tsx'
 import { PageTitle } from '../../components/PageTitle.tsx'
+import { PageSubTitle } from '../../components/PageSubTitle.tsx'
 
 export const handler: Handlers<Data> = {
   async GET(_, ctx) {
@@ -65,18 +66,13 @@ export default function CreatePostPage({
       <Head>
         <title>Create Post</title>
       </Head>
-      <div
-        class=
-        "max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pt-12 pb-20 flex flex-col"
-      >
+      <div class="max-w-screen-sm mx-auto px-4 sm:px-6 md:px-8 pb-20 flex flex-col">
         <PageTitle pageTitle="G's Work Posts" link="/" />
         <PostsMenu />
-        <section class="mt-8">
-          <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-400 py-4">
-            Create Post
-          </h2>
+        <section>
+          <PageSubTitle pageSubTitle="Create Posts" />
           <form
-            class="rounded-xl border dark:border-gray-700 p-5 shadow-md bg-gray-50 dark:bg-gray-800 dark:text-gray-400"
+            class="border dark:border-gray-700 p-4 shadow-md bg-gray-50 dark:bg-gray-800 dark:text-gray-400"
             method="POST"
           >
             <div class="flex flex-col gap-y-2">
@@ -90,7 +86,7 @@ export default function CreatePostPage({
                 <select
                   id="work_id"
                   name="work_id"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option value="">-</option>
                   {data?.works?.map((x) =>
@@ -111,7 +107,7 @@ export default function CreatePostPage({
                 <select
                   id="student_id"
                   name="student_id"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option value="">-</option>
                   {data?.students?.map((x) =>
@@ -131,10 +127,11 @@ export default function CreatePostPage({
                 </label>
                 <input
                   id="work_url"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   type="text"
                   name="work_url"
                   value={data?.work_url}
+                  placeholder="https://github.com/..."
                 />
                 {data?.error?.work_url && (
                   <p class="text-red-500 text-sm">{data.error.work_url}</p>
@@ -149,7 +146,7 @@ export default function CreatePostPage({
                 </label>
                 <input
                   id="work_time"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   type="number"
                   name="work_time"
                   min="1"
@@ -164,11 +161,11 @@ export default function CreatePostPage({
             </div>
             <div class="flex justify-end mt-4">
               <a href="/">
-                <button type="button" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                <button type="button" class="py-2 px-4 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                   Back
                 </button>
               </a>
-              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                 Submit
               </button>
             </div>
