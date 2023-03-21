@@ -71,11 +71,11 @@ export const PostsTable = ({ posts, isAdmin }: TableParams) => {
                 {
                   isAdmin
                     ?
-                    <a href={`admin/${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                    <a href={`/admin/${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                       admin
                     </a>
                     :
-                    <a href={`posts/${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                    <a href={`/posts/${post.id}`} class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                       detail
                     </a>
                 }
